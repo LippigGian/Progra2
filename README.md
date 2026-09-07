@@ -1,6 +1,6 @@
 # Parcial 1 - Grupo XX
 
-Proyecto de Algoritmos y Estructuras de Datos II (UADE). Contiene los TPs 01, 02 y 03
+Proyecto de Algoritmos y Estructuras de Datos II (UADE). Contiene los TPs 01, 02, 03 y 04
 sobre una misma aplicación de consola.
 
 ## Cómo abrirlo en IntelliJ IDEA
@@ -36,6 +36,15 @@ src/
     Playlist.java         TDA y estado de reproducción
     PlaylistExercise.java Capa de consola integrada al menú principal
 
+  stackModule/          TDA Stack (TP 04)
+    MyStack.java           Especificación de la pila genérica
+    MyArrayStack.java      Implementación propia sobre arreglo dinámico
+
+  browserModule/        Historial de navegador web (TP 04)
+    Navegador.java         Página actual y dos pilas: atrás y adelante
+    BrowserExercise.java  Capa de consola integrada al menú principal
+
+tests/                  Pruebas del Stack y del navegador sin dependencias
 docs/                   Guías explicativas de cada TP
 ```
 
@@ -46,8 +55,20 @@ docs/                   Guías explicativas de cada TP
 | 1 | TP 01 — Ejercicio de prueba (herencia y clase abstracta) |
 | 2 | TP 02 — TDA List de Java (ArrayList / LinkedList) |
 | 3 | TP 03 — Playlist musical |
+| 4 | TP 04 — Historial de navegador web con TDA Stack propio |
+| 5 | TP 04 — Historial de navegador web con nodos enlazados |
 
 ## Notas
+
+- La opción 4 conserva la versión con arreglos. La opción 5 utiliza
+  `MyLinkedStack<E>`, que implementa la misma interfaz `MyStack<E>` con nodos.
+  Su navegador y consola están en `src/linkedBrowserModule/`, en los archivos
+  `NavegadorEnlazado.java` y `LinkedBrowserExercise.java`, para poder estudiar
+  ambas versiones por separado sin reemplazar los archivos originales.
+
+- El TP 04 permite visitar páginas por nombre, volver atrás y avanzar. Usa dos
+  pilas propias; una visita nueva elimina solo el historial hacia adelante.
+  Ver [guía y pruebas del TP 04](docs/Guia_TP04_AyED_II.md).
 
 - Para cambiar la implementación usada en el TP 02, editar una línea del constructor
   de `ListExercise` (`new ArrayList<>()` o `new LinkedList<>()`).
