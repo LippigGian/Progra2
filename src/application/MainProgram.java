@@ -3,6 +3,8 @@ package application;
 import java.util.Scanner;
 
 import listModule.ListExercise;
+import browserModule.BrowserExercise;
+import linkedBrowserModule.LinkedBrowserExercise;
 import playlistModule.PlaylistExercise;
 
 public class MainProgram {
@@ -39,6 +41,8 @@ public class MainProgram {
             System.out.println("1 - TP 01: Ejercicio de prueba");
             System.out.println("2 - TP 02: TDA List de Java");
             System.out.println("3 - TP 03: Playlist musical");
+            System.out.println("4 - TP 04: Historial de navegador web (Arrays)");
+            System.out.println("5 - TP 04: Historial de navegador web (Linked nodes)");
             System.out.println("0 - Salir");
             System.out.print("Seleccione una opcion: ");
 
@@ -55,6 +59,14 @@ public class MainProgram {
                     break;
                 case "3":
                     exercise = new PlaylistExercise(scanner);
+                    validOption = true;
+                    break;
+                case "4":
+                    exercise = new BrowserExercise(scanner);
+                    validOption = true;
+                    break;
+                case "5":
+                    exercise = new LinkedBrowserExercise(scanner);
                     validOption = true;
                     break;
                 case "0":
