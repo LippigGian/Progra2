@@ -1,133 +1,120 @@
 # TP 04: historial de navegador web
 
-## Segunda versión: nodos enlazados
+El programa simula el historial de un navegador por consola. Permite escribir
+el nombre de una página, volver atrás y volver adelante. En cada paso muestra
+la página actual y las opciones disponibles.
 
-La opción 4 mantiene el navegador original con `MyArrayStack`. La opción 5
-ejecuta `LinkedBrowserExercise` y `NavegadorEnlazado`, en `linkedBrowserModule`,
-con dos pilas `MyLinkedStack`. Se mantienen archivos separados para comparar
-ambas versiones, aunque la lógica de navegación es la misma.
+## Las dos versiones
 
-`MyLinkedStack<E>` implementa la interfaz existente `MyStack<E>`. Cada `Node<E>`
-guarda `element` y `next`. `last` apunta al tope; cuando está vacía vale `null`.
+Hay dos módulos distintos para el navegador:
 
-- `push`: crea un nodo que apunta al tope anterior y lo convierte en `last`.
-- `pop`: devuelve `last.element` y avanza `last` al siguiente nodo.
-- `peek`: devuelve `last.element` sin modificar los enlaces.
-- `clear`: pone `last` en `null` y `size` en cero.
-
-Estas operaciones cuestan O(1), sin contar la recolección de memoria. No hay
-capacidad inicial ni `resize`: cada `push` crea un nodo. Se conservan las mismas
-excepciones ante elementos nulos y consultas o extracciones en vacío.
-
-Para verificar las dos versiones desde PowerShell:
-
-```powershell
-$sources = @(Get-ChildItem src -Recurse -Filter *.java | ForEach-Object FullName)
-$testSources = @(Get-ChildItem tests -Filter *.java | ForEach-Object FullName)
-javac -encoding UTF-8 --release 17 -d out $sources $testSources
-java -cp out BrowserStackTest
-java -cp out LinkedBrowserStackTest
-```
-
-Las secciones siguientes describen la versión original con arreglos.
-
-Se implementa la primera opción de la consigna: una simulación por
-consola de una pagina web. Se ingresa el nombre de una página; 
-
-## Implementación del TDA Stack
-
-- `MyStack<E>` especifica las operaciones de una pila genérica.
-- `MyArrayStack<E>` las implementa con un arreglo dinámico propio. No utiliza
-  `java.util.Stack`, `Deque` ni colecciones de Java.
-- `Navegador` utiliza dos objetos declarados como `MyStack<String>`, construidos
-  como `MyArrayStack<>`. La lógica depende de la interfaz del TDA.
-- `BrowserExercise` hereda de `Exercise` y usa el Scanner compartido, igual que
-  los ejercicios anteriores. Separa la entrada/salida de la lógica del historial.
-
-Una pila sigue LIFO: el último elemento que entra es el primero que sale.
-`push` apila, `pop` retira el tope y `peek` lo consulta sin retirarlo.
-`size`, `isEmpty` y `clear` completan las operaciones.
-
-El tope ocupa la posición `size - 1`. Cuando el arreglo se llena, se duplica su
-capacidad mediante `validateSize` y `resize`. `pop` anula la referencia retirada;
-`clear` reemplaza el arreglo por uno nuevo de capacidad `DEFAULT_SIZE` y pone
-`size` en cero, permitiendo reutilizar la pila incluso tras vaciarla varias veces.
-
-| Operación | Complejidad temporal |
-|---|---|
-| `push` | O(1) amortizado; O(n) cuando crece el arreglo |
-| `pop`, `peek`, `size`, `isEmpty` | O(1) |
-| `clear` | O(1), crea un arreglo de capacidad inicial fija |
-
-## Cómo funcionan las dos pilas
-
-La página actual se guarda aparte. La pila `atras` tiene como tope la página
-anterior, y la pila `adelante`, la siguiente.
-
-| Acción | Efecto |
-|---|---|
-| Visitar | Apilar la actual en `atras` si existe, cambiar la actual y vaciar `adelante` |
-| Atrás | Apilar la actual en `adelante` y tomar la nueva actual con `atras.pop()` |
-| Adelante | Apilar la actual en `atras` y tomar la nueva actual con `adelante.pop()` |
-
-Ejemplo (pilas escritas desde la base hacia el tope):
-
-| Paso | Atrás | Actual | Adelante |
+| Opción del menú | Módulo | Clases | Pila que utiliza |
 |---|---|---|---|
-| Visitar A, B y C | [A, B] | C | [] |
-| Atrás | [A] | B | [C] |
-| Atrás | [] | A | [C, B] |
-| Adelante | [A] | B | [C] |
-| Visitar D | [A, B] | D | [] |
+| 4 | `browserModule` | `BrowserExercise` y `Navegador` | `MyArrayStack`: arreglos |
+| 5 | `linkedBrowserModule` | `LinkedBrowserExercise` y `NavegadorEnlazado` | `MyLinkedStack`: nodos enlazados |
 
-C deja de estar disponible, pero A y B se conservan. Este es el caso central
-que exige la consigna. Retroceder y avanzar cuestan O(1) amortizado por el
-posible crecimiento de la pila destino. Visitar también cuesta O(1) amortizado:
-vaciar el futuro reemplaza el arreglo en O(1), sin contar el trabajo posterior
-del garbage collector.
+Ambas versiones hacen lo mismo. Cambia la forma de guardar los elementos en
+las pilas. Las clases `BrowserExercise` y `LinkedBrowserExercise` muestran el
+menú y leen los datos; `Navegador` y `NavegadorEnlazado` manejan el historial.
 
-Se usan los nombres del ejemplo del profesor: `MyArrayStack<E>`,
-`MyStack<E>`, `elements`, `size`, `DEFAULT_SIZE`, `validateSize`, `resize`,
-`nextArray` y `result`. Se conservan `push` y `pop` y el acceso al último elemento
-para cumplir LIFO: el ejemplo recibido usa `enqueue` y `dequeue` y retira el
-primero (FIFO). No se necesitan corrimientos ni validación de índices públicos
-para una pila. `validateSize` crece cuando el tamaño solicitado supera la
-capacidad, aprovechando todas las posiciones del arreglo.
+Las pilas están en `stackModule`, separadas del navegador para poder
+reutilizarlas. Ambas implementan la interfaz `MyStack<E>`, que declara sus
+operaciones. `E` representa el tipo de elemento; el navegador usa `String`
+para guardar los nombres de las páginas.
 
-## Validaciones y decisiones para defender
+## Qué es una pila y cuáles son sus métodos
 
-- Se comienza sin página actual ni historial. La consigna exime al navegador
-  de tener datos precargados.
-- En cada paso se muestran la página actual y las opciones. Se indica cuando
-  atrás o adelante no están disponibles; seleccionarlos informa el motivo y
-  mantiene el estado.
-- La pila lanza `IllegalStateException` ante `pop` o `peek` en vacío, e
-  `IllegalArgumentException` ante `push(null)`. No imprime mensajes de consola.
-- La aplicación consulta si hay historial antes de desapilar, evitando esas
-  excepciones durante el uso normal.
-- Se rechazan nombres vacíos antes de llamar al modelo. El modelo también
-  rechaza nombres vacíos o nulos antes de cambiar el historial.
-- Se acepta cualquier nombre no vacío: la consigna pide nombres, no URLs
-  válidas. Se eliminan espacios de los extremos.
-- Visitar el mismo nombre cuenta como una nueva visita y también elimina el
-  futuro. Las pilas almacenan visitas, no un conjunto de páginas únicas.
-- Una opción desconocida, incluso texto, no modifica el estado. Se lee con
-  `nextLine`, como en los TPs anteriores.
-- La opción 0 vuelve al menú principal. Al volver a entrar se crea otra sesión
-  de historial, siguiendo la creación de ejercicios de `MainProgram`.
+Una pila funciona con la regla **LIFO**: el último elemento que entra es el
+primero que sale. El **tope** es el último agregado que todavía no fue retirado.
 
-## Verificación
+| Método | Qué hace |
+|---|---|
+| `push(element)` | Agrega un elemento al tope. |
+| `pop()` | Retira y devuelve el elemento del tope. |
+| `peek()` | Devuelve el elemento del tope sin retirarlo. No imprime nada. |
+| `isEmpty()` | Devuelve `true` si la pila está vacía. |
+| `size()` | Devuelve la cantidad de elementos guardados. |
+| `clear()` | Vacía la pila. |
 
-Desde la raíz del proyecto, en PowerShell con JDK 17 o superior:
+Por ejemplo, si agregamos A, B y C, el tope es C. `peek()` devuelve C sin
+modificar la pila. `pop()` devuelve C y lo elimina; B pasa a ser el tope.
 
-```powershell
-$sources = @(Get-ChildItem src -Recurse -Filter *.java | ForEach-Object FullName)
-javac -encoding UTF-8 --release 17 -d out $sources tests/BrowserStackTest.java
-java -cp out BrowserStackTest
-java -cp out application.MainProgram
+## Versión con arreglos: MyArrayStack
+
+Los elementos se guardan en el arreglo `elements`. `size` cuenta cuántos hay;
+no es la capacidad del arreglo. La capacidad inicial es 4 (`DEFAULT_SIZE`).
+
+- `push` agrega en `elements[size]` y aumenta `size`.
+- `pop` retira el elemento de `elements[size - 1]`, reduce `size` y deja en
+  `null` la posición que quedó libre.
+- `peek` devuelve `elements[size - 1]`.
+- `clear` crea un arreglo vacío de capacidad inicial y pone `size` en cero.
+
+Antes de agregar, `validateSize(size + 1)` verifica si hay espacio. Si el tamaño
+necesario supera la capacidad, llama a `resize()`, que crea un arreglo del doble
+de tamaño y copia los elementos: 4 → 8 → 16…
+
+No hacen falta `shiftLeft` ni `shiftRight`: se agrega y se retira al final,
+sin desplazar los demás elementos.
+
+## Versión con nodos: MyLinkedStack
+
+Cada `Node<E>` contiene un dato (`element`) y una referencia al siguiente nodo
+(`next`). La variable `last` apunta al tope: el último nodo agregado.
+
+- `push` crea un nodo que apunta al tope anterior y lo convierte en `last`.
+- `pop` guarda el dato de `last`, cambia `last` por `last.next` y devuelve el dato.
+- `peek` devuelve `last.element` sin cambiar los enlaces.
+- `clear` pone `last` en `null` y `size` en cero.
+
+Ejemplo después de agregar A, B y C:
+
+```text
+last → C → B → A → null
 ```
 
-Las pruebas verifican el orden LIFO tras varios crecimientos, las excepciones
-del TDA, la reutilización tras vaciarlo, ambos límites del historial, movimientos
-consecutivos atrás/adelante, la eliminación del futuro al visitar D, la
-conservación del pasado y la recuperación de la consola ante entradas inválidas.
+Si hacemos `pop()`, sale C y queda:
+
+```text
+last → B → A → null
+```
+
+No necesita verificar capacidad ni duplicar un arreglo: cada `push` crea un
+nodo nuevo. `size` solo cuenta los elementos.
+
+## Cómo funciona la navegación
+
+Cada navegador tiene una `paginaActual` y dos pilas:
+
+- `atras`: guarda las páginas a las que podemos retroceder.
+- `adelante`: guarda las páginas a las que podemos avanzar después de retroceder.
+
+**Visitar una página (`visitar`)**: guarda la actual en `atras` con `push`, si
+existe; cambia la página actual y vacía únicamente `adelante` con `clear`.
+
+**Volver atrás (`retroceder`)**: guarda la actual en `adelante` con `push` y
+obtiene la nueva actual mediante `atras.pop()`.
+
+**Volver adelante (`avanzar`)**: guarda la actual en `atras` con `push` y
+obtiene la nueva actual mediante `adelante.pop()`.
+
+`getPaginaActual()` devuelve la página que se muestra. `puedeRetroceder()` y
+`puedeAvanzar()` consultan si la pila correspondiente tiene elementos usando
+`isEmpty()`. Si no hay historial, el movimiento devuelve `false` y la consola
+avisa sin cambiar la página.
+
+### Ejemplo
+
+1. Visitamos A, B y C. La página actual es C.
+2. Volvemos atrás. La actual es B y podemos avanzar a C.
+3. Desde B visitamos D. La actual pasa a ser D.
+4. Ya no podemos avanzar a C, pero podemos volver atrás a B y luego a A.
+
+Visitar una página nueva elimina **solo el historial hacia adelante**.
+
+## Datos inválidos
+
+Las pilas rechazan `null` en `push` y lanzan una excepción si se llama a `pop`
+o `peek` estando vacías. El navegador comprueba si hay historial antes de
+retirar elementos. La consola también rechaza nombres vacíos y opciones
+inválidas, mostrando un mensaje para que el usuario pueda continuar.
