@@ -1,6 +1,6 @@
 # Parcial 1 - Grupo XX
 
-Proyecto de Algoritmos y Estructuras de Datos II (UADE). Contiene los TPs 01, 02, 03 y 04
+Proyecto de Algoritmos y Estructuras de Datos II (UADE). Contiene los TPs 01, 02, 03, 04 y 05
 sobre una misma aplicación de consola.
 
 ## Cómo abrirlo en IntelliJ IDEA
@@ -44,7 +44,17 @@ src/
     Navegador.java         Página actual y dos pilas: atrás y adelante
     BrowserExercise.java  Capa de consola integrada al menú principal
 
-tests/                  Pruebas del Stack y del navegador sin dependencias
+  queueModule/          TDA Queue (TP 05)
+    MyQueue.java           Interfaz de cola FIFO
+    MyLinkedQueue.java     Implementación propia con nodos enlazados
+    LinkedNode.java        Nodo con value, next y prev
+
+  restaurantModule/     Gestión de mesas (TP 05)
+    Grupo.java            Nombre y cantidad de personas
+    Mesa.java             Ocupante y cola de espera de una mesa
+    Restaurante.java      Asignación de grupos a las dos mesas
+    RestaurantExercise.java Menú y validaciones de consola
+
 docs/                   Guías explicativas de cada TP
 ```
 
@@ -57,8 +67,13 @@ docs/                   Guías explicativas de cada TP
 | 3 | TP 03 — Playlist musical |
 | 4 | TP 04 — Historial de navegador web con TDA Stack propio |
 | 5 | TP 04 — Historial de navegador web con nodos enlazados |
+| 6 | TP 05 — Mesas de restaurante con TDA Queue |
 
 ## Notas
+
+- El TP 05 usa dos colas FIFO independientes para las mesas de 2 y 4 personas.
+  Incluye grupos de ejemplo y permite registrar, hacer pasar y liberar mesas.
+  Ver [guía del TP 05](docs/Guia_TP05_AyED_II.md).
 
 - La opción 4 conserva la versión con arreglos. La opción 5 utiliza
   `MyLinkedStack<E>`, que implementa la misma interfaz `MyStack<E>` con nodos.

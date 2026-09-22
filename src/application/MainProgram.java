@@ -6,6 +6,7 @@ import listModule.ListExercise;
 import browserModule.BrowserExercise;
 import linkedBrowserModule.LinkedBrowserExercise;
 import playlistModule.PlaylistExercise;
+import restaurantModule.RestaurantExercise;
 
 public class MainProgram {
 
@@ -43,9 +44,14 @@ public class MainProgram {
             System.out.println("3 - TP 03: Playlist musical");
             System.out.println("4 - TP 04: Historial de navegador web (Arrays)");
             System.out.println("5 - TP 04: Historial de navegador web (Linked nodes)");
+            System.out.println("6 - TP 05: Mesas de restaurante (Queue)");
             System.out.println("0 - Salir");
             System.out.print("Seleccione una opcion: ");
 
+            if (!scanner.hasNextLine()) {
+                running = false;
+                return;
+            }
             String input = scanner.nextLine().trim();
 
             switch (input) {
@@ -67,6 +73,10 @@ public class MainProgram {
                     break;
                 case "5":
                     exercise = new LinkedBrowserExercise(scanner);
+                    validOption = true;
+                    break;
+                case "6":
+                    exercise = new RestaurantExercise(scanner);
                     validOption = true;
                     break;
                 case "0":
