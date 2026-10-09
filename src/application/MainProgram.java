@@ -7,11 +7,15 @@ import browserModule.BrowserExercise;
 import linkedBrowserModule.LinkedBrowserExercise;
 import playlistModule.PlaylistExercise;
 import restaurantModule.RestaurantExercise;
+import characterModule.CharacterExercise;
+import complaintModule.ComplaintExercise;
 
 public class MainProgram {
 
     private boolean running = true;
     private Exercise exercise;
+    private CharacterExercise characterExercise;
+    private ComplaintExercise complaintExercise;
 
     public static void main(String[] args) {
         MainProgram program = new MainProgram();
@@ -45,6 +49,8 @@ public class MainProgram {
             System.out.println("4 - TP 04: Historial de navegador web (Arrays)");
             System.out.println("5 - TP 04: Historial de navegador web (Linked nodes)");
             System.out.println("6 - TP 05: Mesas de restaurante (Queue)");
+            System.out.println("7 - Analisis de personajes de videojuegos (Set)");
+            System.out.println("8 - TP 07: Atencion de reclamos (PriorityQueue)");
             System.out.println("0 - Salir");
             System.out.print("Seleccione una opcion: ");
 
@@ -77,6 +83,20 @@ public class MainProgram {
                     break;
                 case "6":
                     exercise = new RestaurantExercise(scanner);
+                    validOption = true;
+                    break;
+                case "7":
+                    if (characterExercise == null) {
+                        characterExercise = new CharacterExercise(scanner);
+                    }
+                    exercise = characterExercise;
+                    validOption = true;
+                    break;
+                case "8":
+                    if (complaintExercise == null) {
+                        complaintExercise = new ComplaintExercise(scanner);
+                    }
+                    exercise = complaintExercise;
                     validOption = true;
                     break;
                 case "0":

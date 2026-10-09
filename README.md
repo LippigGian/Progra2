@@ -3,6 +3,16 @@
 Proyecto de Algoritmos y Estructuras de Datos II (UADE). Contiene los TPs 01, 02, 03, 04 y 05
 sobre una misma aplicación de consola.
 
+Incluye además una **herramienta de análisis de personajes de videojuegos con
+TDA Set propio**, disponible en la opción **7**. Permite crear personajes y
+habilidades, asignarlas, quitarlas y comparar conjuntos. Incluye datos de ejemplo.
+Ver [guía de implementación, decisiones y pruebas](docs/Guia_Personajes_Set.md).
+
+El paquete `src/priorityQueueModule/` contiene la base del TDA PriorityQueue
+compartida por la cátedra. Se mantiene para que compile y ejecute el TP 07;
+no forma parte de una entrega semanal propia. Ver
+[nota sobre el material de cátedra](docs/Nota_Material_Catedra_PriorityQueue.md).
+
 ## Cómo abrirlo en IntelliJ IDEA
 
 1. Descomprimir el zip.
@@ -68,6 +78,8 @@ docs/                   Guías explicativas de cada TP
 | 4 | TP 04 — Historial de navegador web con TDA Stack propio |
 | 5 | TP 04 — Historial de navegador web con nodos enlazados |
 | 6 | TP 05 — Mesas de restaurante con TDA Queue |
+| 7 | Personajes de videojuegos con TDA Set propio |
+| 8 | TP 07 — Atención de reclamos con TDA PriorityQueue |
 
 ## Notas
 
