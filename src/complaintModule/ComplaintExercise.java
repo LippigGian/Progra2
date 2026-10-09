@@ -1,4 +1,4 @@
-    package complaintModule;
+package complaintModule;
 
 import application.Exercise;
 import java.util.Scanner;
@@ -11,6 +11,40 @@ public class ComplaintExercise extends Exercise {
 
     public ComplaintExercise(Scanner scanner) {
         super(scanner);
+        cargarDatosDeEjemplo();
+    }
+
+    /**
+     * Datos de ejemplo cargados a proposito en desorden de urgencia, y con
+     * urgencias repetidas, para verificar que la cola:
+     *  - atiende siempre primero el mas urgente, y
+     *  - entre reclamos de igual urgencia respeta el orden de llegada (FIFO).
+     *
+     * Orden de atencion esperado:
+     *  1. Servidor de archivos caido      (Critico, llego 3ro)
+     *  2. Sin internet en sucursal Norte  (Critico, llego 5to)
+     *  3. No llegan los correos           (Alto)
+     *  4. Impresora sin toner             (Medio, llego 1ro)
+     *  5. Teclado con teclas trabadas     (Medio, llego 6to)
+     *  6. Silla rota en recepcion         (Bajo)
+     */
+    private void cargarDatosDeEjemplo() {
+        agregar("Impresora sin toner",
+                "La impresora del segundo piso no imprime por falta de toner.", Urgencia.MEDIO);
+        agregar("Silla rota en recepcion",
+                "Una de las sillas de recepcion tiene una rueda rota.", Urgencia.BAJO);
+        agregar("Servidor de archivos caido",
+                "Nadie puede acceder a las carpetas compartidas desde las 9 hs.", Urgencia.CRITICO);
+        agregar("No llegan los correos",
+                "El area de ventas no recibe mails externos desde ayer.", Urgencia.ALTO);
+        agregar("Sin internet en sucursal Norte",
+                "La sucursal Norte quedo sin conexion y no puede facturar.", Urgencia.CRITICO);
+        agregar("Teclado con teclas trabadas",
+                "En administracion un teclado tiene varias teclas que no responden.", Urgencia.MEDIO);
+    }
+
+    private void agregar(String titulo, String descripcion, Urgencia urgencia) {
+        reclamos.enqueue(new Reclamo(titulo, descripcion, urgencia), urgencia.getPrioridad());
     }
 
     @Override
@@ -95,31 +129,74 @@ public class ComplaintExercise extends Exercise {
     }
 
     private void visualizarReclamo() {
-        if (reclamos.isEmpty()) {
-            System.out.println("No hay reclamos pendientes.");
-            return;
-        }
-        //Muestra siempre el reclamo con mayor prioridad (urgencia) sin eliminarlo de la cola.
-        Reclamo siguiente = reclamos.peek();
-        System.out.println("\n===== SIGUIENTE RECLAMO =====");
-        System.out.println(siguiente);
-
+        // Atiende reclamos en cadena mientras el usuario quiera continuar.
         while (running) {
-            String opcion = leer("¿Marcar como resuelto? (s/n): ");
-            if (opcion == null) {
+            if (reclamos.isEmpty()) {
+                System.out.println("No hay reclamos pendientes.");
                 return;
+            }
+            //Muestra siempre el reclamo con mayor prioridad (urgencia) sin eliminarlo de la cola.
+            Reclamo siguiente = reclamos.peek();
+            System.out.println("\n===== SIGUIENTE RECLAMO =====");
+            System.out.println(siguiente);
+
+            Boolean resuelto = preguntarSiNo("¿Marcar como resuelto? (s/n): ");
+            if (resuelto == null) {
+                return;
+            }
+            if (!resuelto) {
+                System.out.println("El reclamo permanece pendiente en la cola.");
+                Boolean reabrir = preguntarSiNo(
+                        "¿Quieres volver a abrir el ticket? (s = volver a abrir / n = volver al menu de reclamos): ");
+                if (reabrir == null) {
+                    return;
+                }
+                if (!reabrir) {
+                    // Vuelve al menu de reclamos (exerciseLogic se vuelve a ejecutar).
+                    return;
+                }
+
+                continue;
+            }
+
+            reclamos.dequeue();
+            System.out.println("Reclamo resuelto y eliminado de la cola.");
+
+            if (reclamos.isEmpty()) {
+                System.out.println("No quedan reclamos pendientes.");
+                return;
+            }
+
+            System.out.println("Reclamos pendientes: " + reclamos.size());
+            Boolean continuar = preguntarSiNo(
+                    "¿Desea continuar con el siguiente reclamo? (s = continuar / n = volver al menu de reclamos): ");
+            if (continuar == null) {
+                return;
+            }
+            if (!continuar) {
+                // Vuelve al menu de reclamos (exerciseLogic se vuelve a ejecutar).
+                return;
+            }
+            // Si continua, el while vuelve a mostrar el siguiente reclamo.
+        }
+    }
+
+    /** Pide una respuesta s/n hasta que sea valida. Devuelve null si se corta la entrada. */
+    private Boolean preguntarSiNo(String mensaje) {
+        while (running) {
+            String opcion = leer(mensaje);
+            if (opcion == null) {
+                return null;
             }
             if (opcion.equalsIgnoreCase("s")) {
-                reclamos.dequeue();
-                System.out.println("Reclamo resuelto y eliminado de la cola.");
-                return;
+                return true;
             }
             if (opcion.equalsIgnoreCase("n")) {
-                System.out.println("El reclamo permanece pendiente en la cola.");
-                return;
+                return false;
             }
             System.out.println("Respuesta invalida. Ingrese 's' o 'n'.");
         }
+        return null;
     }
 
     private String leer(String mensaje) {
