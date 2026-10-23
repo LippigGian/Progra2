@@ -80,6 +80,7 @@ docs/                   Guías explicativas de cada TP
 | 6 | TP 05 — Mesas de restaurante con TDA Queue |
 | 7 | Personajes de videojuegos con TDA Set propio |
 | 8 | TP 07 — Atención de reclamos con TDA PriorityQueue |
+| 9 | TP 09 — Leaderboard de videojuego con TDA BST |
 
 ## Notas
 

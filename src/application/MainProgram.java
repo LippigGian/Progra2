@@ -9,6 +9,7 @@ import playlistModule.PlaylistExercise;
 import restaurantModule.RestaurantExercise;
 import characterModule.CharacterExercise;
 import complaintModule.ComplaintExercise;
+import leaderboardModule.LeaderboardExercise;
 
 public class MainProgram {
 
@@ -16,6 +17,7 @@ public class MainProgram {
     private Exercise exercise;
     private CharacterExercise characterExercise;
     private ComplaintExercise complaintExercise;
+    private LeaderboardExercise leaderboardExercise;
 
     public static void main(String[] args) {
         MainProgram program = new MainProgram();
@@ -51,6 +53,7 @@ public class MainProgram {
             System.out.println("6 - TP 05: Mesas de restaurante (Queue)");
             System.out.println("7 - Analisis de personajes de videojuegos (Set)");
             System.out.println("8 - TP 07: Atencion de reclamos (PriorityQueue)");
+            System.out.println("9 - TP 09: Leaderboard de videojuego (BST)");
             System.out.println("0 - Salir");
             System.out.print("Seleccione una opcion: ");
 
@@ -97,6 +100,13 @@ public class MainProgram {
                         complaintExercise = new ComplaintExercise(scanner);
                     }
                     exercise = complaintExercise;
+                    validOption = true;
+                    break;
+                case "9":
+                    if (leaderboardExercise == null) {
+                        leaderboardExercise = new LeaderboardExercise(scanner);
+                    }
+                    exercise = leaderboardExercise;
                     validOption = true;
                     break;
                 case "0":
